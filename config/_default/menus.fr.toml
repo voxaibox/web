@@ -50,7 +50,7 @@ url = "/contact"
 [[footer]]
 name = "Contact"
 url = "/contact"
-weight = 1
+weight = 2
 
 # [[footer]]
 # name = "Elements"
