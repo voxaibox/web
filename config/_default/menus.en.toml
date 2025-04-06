@@ -47,10 +47,10 @@ url = "/contact"
 
 
 # footer menu
-# [[footer]]
-# name = "About"
-# url = "/about"
-# weight = 1
+[[footer]]
+name = "Contact"
+url = "/contact"
+weight = 1
 
 # [[footer]]
 # name = "Elements"
