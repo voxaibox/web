@@ -2,34 +2,49 @@
 {{ if hugo.IsMultilingual }}
 {{ $class := .Class }}
 {{ $context := .Context }}
-{{ $pageLang := $context.Lang }}
+{{ $pageLang := .Lang }}
 {{ $pageTranslations := newScratch }}
-{{/* First, fill all translations of the Home page (failsafe) */}}
+
+{{/* Remplir les traductions pour la page actuelle ou la page d'accueil */}}
 {{ range site.Home.AllTranslations }}
   {{ $pageTranslations.Set .Language.Lang .Permalink }}
 {{ end }}
-{{/* Second, if a translation exists for the current page for the target language, replace failsafe */}}
 {{ range $context.AllTranslations }}
   {{ $pageTranslations.Set .Language.Lang .Permalink }}
 {{ end }}
 
-<select class="{{ $class }}" onchange="location = this.value">
+<select class="{{ $class }}" id="language-switcher">
   {{ range site.Languages }}
-    {{/* Fill the dropdown with all known languages */}}
     {{ $link := $pageTranslations.Get .Lang }}
     {{ if $link }}
       <option
         id="{{ .Lang }}"
         value="{{ $link }}"
-      {{ if eq .Lang $pageLang }}
-        selected
-      {{ end }}
-        >
+        {{ if eq .Lang $pageLang }}selected{{ end }}>
         {{ .LanguageName }}
       </option>
-    {{ else }}
-      {{/* if we can't safely redirect the user to the translated page or at least to translated home, discard the language from options */}}
     {{ end }}
   {{ end }}
 </select>
+
+<script>
+  document.getElementById('language-switcher').addEventListener('change', function () {
+    const selectedLanguageUrl = this.value;
+    localStorage.setItem('preferredLanguage', this.options[this.selectedIndex].id); // Stocke la langue choisie
+    window.location.href = selectedLanguageUrl;
+  });
+
+  // Applique la langue préférée ou la langue du navigateur si elle est définie
+  const preferredLanguage = localStorage.getItem('preferredLanguage');
+  const browserLanguage = navigator.language.slice(0, 2); // Langue du navigateur
+  const languageSwitcher = document.getElementById('language-switcher');
+  const languageToSelect = preferredLanguage || browserLanguage;
+
+  if (languageToSelect) {
+    const optionToSelect = Array.from(languageSwitcher.options).find(option => option.id === languageToSelect);
+    if (optionToSelect) {
+      optionToSelect.selected = true;
+    }
+  }
+</script>
 {{ end }}
